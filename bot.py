@@ -117,7 +117,11 @@ async def list(event: bot.SimpleBotEvent) -> str:
         first = name.replace("), (", ")\n(").replace("'", "")
         conn.close()
         try:
-            await event.answer(str(first)[1:-1])
+            print(first)
+            if len(first) < 4:
+                await event.answer('Пусто')
+            else:
+                await event.answer(str(first)[1:-1])
         except Exception as e:
             await event.answer("[id86404556|кожаный], что-то сломалось")
             print(e)
@@ -127,7 +131,7 @@ async def list(event: bot.SimpleBotEvent) -> str:
 
 
 @bot.message_handler(bot.text_contains_filter(["брат, ты живой?"]))
-async def list(event: bot.SimpleBotEvent) -> str:
+async def alive(event: bot.SimpleBotEvent) -> str:
     try:
         await event.answer('да брат')
     except Exception as e:
