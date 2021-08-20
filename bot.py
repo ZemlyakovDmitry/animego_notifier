@@ -37,7 +37,7 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
             page = requests.get(url, headers=headers, timeout=10)
             tree = html.fromstring(page.content)
             title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])  # Find anime title by XPath
-            if title is len(title) == 0:
+            if len(title) <= 5:
                 await event.answer("Марьян ты сука?")
             else:
                 last_episode = int(args[2])
