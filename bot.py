@@ -105,7 +105,7 @@ async def start_notifying(event: bot.SimpleBotEvent) -> str:
             time.sleep(300)
         vk.messages.send(peer_id=cfg.id, random_id=0, message='Stopped notifying')
     except Exception as e:
-        await event.answer("[id86404556|кожаный], что-то сломалось")
+        await event.answer("An error occurred. Check logs for additional info.")
         logging.error(e, exc_info=True)
 
 
@@ -126,10 +126,10 @@ async def list(event: bot.SimpleBotEvent) -> str:
             else:
                 await event.answer(str(first)[1:-1])
         except Exception as e:
-            await event.answer("[id86404556|кожаный], что-то сломалось")
+            await event.answer("An error occurred. Check logs for additional info. ")
             logging.error(e, exc_info=True)
     except Exception as e:
-        await event.answer("[id86404556|кожаный], что-то сломалось")
+        await event.answer("An error occurred. Check logs for additional info.")
         logging.error(e, exc_info=True)
 
 
