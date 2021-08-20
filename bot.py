@@ -4,6 +4,7 @@ import re
 import time
 import json
 import vkwave
+import logging
 import requests
 import traceback
 import threading
@@ -15,10 +16,12 @@ from lxml import html
 from bs4 import BeautifulSoup as BS
 from vkwave.bots import SimpleLongPollBot, SimpleBotEvent
 
+filename = './log_bot.txt'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
     'x-requested-with': 'XMLHttpRequest'}  # 2nd header is very important, server returns an 500 error if request was sent without it
 bot = SimpleLongPollBot(tokens=cfg.token, group_id=cfg.vkid)
+logging.basicConfig(filename=filename, level=logging.DEBUG)
 notify = True
 
 
@@ -52,7 +55,7 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
                 await event.answer('Добавил аниме "' + title + '" его id = ' + id)
     except Exception as e:
         await event.answer("Произошла ошибка, убедитесь в правильности переданных параметров(")
-        print(e)
+        logging.error(e, exc_info=True)
 
 
 @bot.message_handler(bot.text_contains_filter(["/delete"]))
@@ -68,7 +71,7 @@ async def deleteanime(event: bot.SimpleBotEvent) -> str:
         return ("Удалил это аниме")
     except Exception as e:
         await event.answer("а где ссылка?????????")
-        print(e)
+        logging.error(e, exc_info=True)
 
 
 @bot.message_handler(bot.text_contains_filter(["/startnotifying"]))
@@ -103,7 +106,7 @@ async def start_notifying(event: bot.SimpleBotEvent) -> str:
         vk.messages.send(peer_id=cfg.id, random_id=0, message='Stopped notifying')
     except Exception as e:
         await event.answer("[id86404556|кожаный], что-то сломалось")
-        print(e)
+        logging.error(e, exc_info=True)
 
 
 @bot.message_handler(bot.text_contains_filter(["/list"]))
@@ -124,10 +127,10 @@ async def list(event: bot.SimpleBotEvent) -> str:
                 await event.answer(str(first)[1:-1])
         except Exception as e:
             await event.answer("[id86404556|кожаный], что-то сломалось")
-            print(e)
+            logging.error(e, exc_info=True)
     except Exception as e:
         await event.answer("[id86404556|кожаный], что-то сломалось")
-        print(e)
+        logging.error(e, exc_info=True)
 
 
 @bot.message_handler(bot.text_contains_filter(["брат, ты живой?"]))
@@ -135,7 +138,7 @@ async def alive(event: bot.SimpleBotEvent) -> str:
     try:
         await event.answer('да брат')
     except Exception as e:
-        print(e)
+        logging.error(e, exc_info=True)
 
 
 bot.run_forever()
