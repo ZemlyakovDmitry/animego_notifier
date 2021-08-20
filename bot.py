@@ -5,17 +5,19 @@ import time
 import json
 import vkwave
 import requests
+import traceback
 import threading
 import tldextract
 import config as cfg
 import sqlite3 as sql
+
 from lxml import html
 from bs4 import BeautifulSoup as BS
 from vkwave.bots import SimpleLongPollBot, SimpleBotEvent
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
-    'x-requested-with': 'XMLHttpRequest'}  # 2nd header is very important, server returns an 500 error without it
+    'x-requested-with': 'XMLHttpRequest'}  # 2nd header is very important, server returns an 500 error if request was sent without it
 bot = SimpleLongPollBot(tokens=cfg.token, group_id=cfg.vkid)
 notify = True
 
@@ -29,29 +31,28 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
         args = event.object.object.message.text.split()
         url = str(args[1])
         ext = tldextract.extract(url)
-        print(ext.domain)
         last_episode = args[2]
-        if ext.domain != 'animego' or last_episode.isnumeric() == False:
-            await event.answer("Марьян ты сука?")
+        if ext.domain != 'animego':
+            await event.answer("Это не animego.org")
+        if last_episode.isnumeric() == False: # domain and episode validation
+            await event.answer("Укажите корректную серию")
         if ext.domain == 'animego':
             page = requests.get(url, headers=headers, timeout=10)
-            tree = html.fromstring(page.content)
-            title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])  # Find anime title by XPath
-            if len(title) <= 5:
-                await event.answer("Марьян ты сука?")
+            if page.status_code != 200:
+                await event.answer('Не удалось получить страницу, попробуйте проверить данные')
             else:
+                tree = html.fromstring(page.content)
+                title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])  # Searching for an anime title using XPath
                 last_episode = int(args[2])
-                anime_url = url.replace("/", "")  # used to remove all slashes
-                id = str(re.findall('^.*\-(.*)\.*', anime_url))[3:-2]  # get id of the anime
-                cur.execute("INSERT OR IGNORE INTO animes VALUES (?, ?, ?, ?)", (id, url, title, last_episode))
+                anime_url = url.replace("/", "")  # removing all slashes
+                id = str(re.findall('^.*\-(.*)\.*', anime_url))[3:-2]  # getting id of the anime
+                cur.execute("INSERT OR IGNORE INTO animes VALUES (?, ?, ?, ?)", (title, last_episode, url, id))
                 conn.commit()
                 conn.close()
                 await event.answer('Добавил аниме "' + title + '" его id = ' + id)
     except Exception as e:
         await event.answer("Произошла ошибка, убедитесь в правильности переданных параметров(")
         print(e)
-    except ValueError:
-        await event.answer("мне нужны циферки")
 
 
 @bot.message_handler(bot.text_contains_filter(["/delete"]))
@@ -112,8 +113,7 @@ async def list(event: bot.SimpleBotEvent) -> str:
         conn = sql.connect('database.db')
         cur = conn.cursor()
         cur.execute("SELECT title, last_episode, url FROM animes")
-        name = str(cur.fetchall())
-        name = str1.join(name)
+        name = str1.join(str(cur.fetchall()))
         first = name.replace("), (", ")\n(").replace("'", "")
         conn.close()
         try:
