@@ -15,11 +15,11 @@
 Установка
 -----------
 ❗ Мнимальная версия Python - 3.8 ❗
-1. `Git clone https://github.com/ZemlyakovDmitry/animego_notifier`
-2. `cd animego_notifier`
-3. `pip3 install -r requirements.txt`
+1. Клонируем репозиторий `git clone https://github.com/ZemlyakovDmitry/animego_notifier`
+2. Открываем директорию с репозиторием `cd animego_notifier`
+3. Устанавливаем зависимости `pip3 install -r requirements.txt`
 4. В файле `config.py` указать токен от группы, а также её id
-5. `python3.8 bot.py`
+5. Запускаем бота `python3.8 bot.py`
 
 Бот запущен!
 
