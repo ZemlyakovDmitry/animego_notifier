@@ -14,7 +14,7 @@
 
 Установка
 -----------
-❗ Мнимальная версия - 3.8 ❗
+❗ Мнимальная версия Python - 3.8 ❗
 1. `Git clone https://github.com/ZemlyakovDmitry/animego_notifier`
 2. `cd animego_notifier`
 3. `pip3 install -r requirements.txt`
