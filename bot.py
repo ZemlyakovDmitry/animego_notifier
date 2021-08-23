@@ -24,7 +24,7 @@ def get_conn():
     try:
         conn = mysql.connector.connect(
             user="root",
-            # My database is accessible only for the localhost. That's why I didn't set secure log/pass combination.
+            # My MySQL database is accessible only for the localhost. That's why I didn't set secure log/pass combination.
             password="root",
             host="localhost",
             port=3306,
