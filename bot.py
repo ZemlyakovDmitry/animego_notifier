@@ -79,7 +79,7 @@ async def deleteanime(event: bot.SimpleBotEvent) -> str:
         conn.close()
         return ("Удалил это аниме")
     except Exception as e:
-        await event.answer("а где ссылка?????????")
+        await event.answer("а где ссылка???????")
         print(e)
 
 
