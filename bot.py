@@ -16,7 +16,7 @@ from vkwave.bots import SimpleLongPollBot
 filename = './log_bot.txt'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36',
-    'x-requested-with': 'XMLHttpRequest'}  # 2nd header is very important, server returns an 500 error if request was sent without it
+    'x-requested-with': 'XMLHttpRequest'}
 bot = SimpleLongPollBot(tokens=cfg.token, group_id=cfg.vkid)
 logging.basicConfig(filename=filename, level=logging.DEBUG)
 
@@ -42,9 +42,9 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
                         await event.answer('Не удалось получить страницу, попробуйте проверить данные')
                     else:
                         tree = html.fromstring(response.content)
-                        title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])  # Searching for an anime title using XPath
+                        title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])
                         last_episode = int(args[2])
-                        anime_url = url.replace("/", "")  # removing all slashes
+                        anime_url = url.replace("/", "")
                         id = str(re.findall('^.*\-(.*)\.*', anime_url))[3:-2]  # getting id of the anime
                         cur.execute("INSERT OR IGNORE INTO animes VALUES (?, ?, ?, ?)", (title, last_episode, url, id))
                         conn.commit()
