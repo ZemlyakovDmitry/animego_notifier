@@ -3,18 +3,14 @@
 import re
 import time
 import json
-import vkwave
 import logging
 import requests
-import traceback
-import threading
 import tldextract
 import config as cfg
 import sqlite3 as sql
 
 from lxml import html
-from bs4 import BeautifulSoup as BS
-from vkwave.bots import SimpleLongPollBot, SimpleBotEvent
+from vkwave.bots import SimpleLongPollBot
 
 filename = './log_bot.txt'
 headers = {
