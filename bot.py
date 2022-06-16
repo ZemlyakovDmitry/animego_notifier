@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import re
-import time
 import json
 import logging
-import requests
-import aiohttp
-import tldextract
-import config as cfg
+import re
 import sqlite3 as sql
+import time
 
+import aiohttp
+import requests
+import tldextract
 from lxml import html
 from vkwave.bots import SimpleLongPollBot
+
+import config as cfg
 
 filename = './log_bot.txt'
 headers = {
