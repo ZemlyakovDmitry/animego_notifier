@@ -23,7 +23,7 @@ logging.basicConfig(filename=filename, level=logging.DEBUG)
 
 
 @bot.message_handler(bot.text_contains_filter(["/add"]))
-async def addanime(event: bot.SimpleBotEvent) -> str:
+async def addanime(event: bot.SimpleBotEvent):
     try:
         conn = sql.connect('database.db')
         cur = conn.cursor()
@@ -34,7 +34,7 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
         last_episode = args[2]
         if ext.domain != 'animego':
             await event.answer("Это не animego.org")
-        if last_episode.isnumeric() == False: # domain and episode validation
+        if not last_episode.isnumeric():  # domain and episode validation
             await event.answer("Укажите корректную серию")
         if ext.domain == 'animego':
             async with aiohttp.ClientSession() as session:
@@ -46,11 +46,11 @@ async def addanime(event: bot.SimpleBotEvent) -> str:
                         title = (str(tree.xpath("//*[@id='content']/div/div[1]/div[2]/div[2]/div/h1/text()"))[2:-2])
                         last_episode = int(args[2])
                         anime_url = url.replace("/", "")
-                        id = str(re.findall('^.*\-(.*)\.*', anime_url))[3:-2]  # getting id of the anime
-                        cur.execute("INSERT OR IGNORE INTO animes VALUES (?, ?, ?, ?)", (title, last_episode, url, id))
+                        anime_id = str(re.findall('^.*\-(.*)\.*', anime_url))[3:-2]  # getting id of the anime
+                        cur.execute("INSERT OR IGNORE INTO animes VALUES (?, ?, ?, ?)", (title, last_episode, url, anime_id))
                         conn.commit()
                         conn.close()
-                        await event.answer('Добавил аниме "' + title + '" его id = ' + id)
+                        await event.answer('Добавил аниме "' + title + '" его id = ' + anime_id)
     except Exception as e:
         await event.answer("Произошла ошибка, убедитесь в правильности переданных параметров(")
         logging.error(e, exc_info=True)
@@ -73,7 +73,7 @@ async def deleteanime(event: bot.SimpleBotEvent) -> str:
 
 
 @bot.message_handler(bot.text_contains_filter(["/startnotifying"]))
-async def start_notifying(event: bot.SimpleBotEvent) -> str:
+async def start_notifying(event: bot.SimpleBotEvent):
     try:
         await event.answer("Начал уведомление")
         while True:
@@ -82,7 +82,7 @@ async def start_notifying(event: bot.SimpleBotEvent) -> str:
             cur.execute("SELECT * FROM animes")
             anime_list = cur.fetchall()
             for anime in anime_list:
-                id, url, title, last_episode = anime
+                anime_id, url, title, last_episode = anime
                 page = requests.get('https://animego.org/anime/' + str(id) + '/player?_allow=true', headers=headers)
                 jsonData = json.loads(page.text)
                 a = jsonData["content"]
@@ -106,7 +106,7 @@ async def start_notifying(event: bot.SimpleBotEvent) -> str:
 
 
 @bot.message_handler(bot.text_contains_filter(["/list"]))
-async def list(event: bot.SimpleBotEvent) -> str:
+async def list_anime(event: bot.SimpleBotEvent):
     try:
         str1 = ''
         conn = sql.connect('database.db')
@@ -130,7 +130,7 @@ async def list(event: bot.SimpleBotEvent) -> str:
 
 
 @bot.message_handler(bot.text_contains_filter(["брат, ты живой?"]))
-async def alive(event: bot.SimpleBotEvent) -> str:
+async def alive(event: bot.SimpleBotEvent):
     try:
         await event.answer('да брат')
     except Exception as e:
