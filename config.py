@@ -1,2 +1,2 @@
 token = 'VK Group Token'
-group_id = id
+vkid = 'VK GROUP ID'
