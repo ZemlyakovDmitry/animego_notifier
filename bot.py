@@ -21,7 +21,6 @@ headers = {
 bot = SimpleLongPollBot(tokens=cfg.token, group_id=cfg.vkid)
 logging.basicConfig(filename=filename, level=logging.DEBUG)
 
-
 @bot.message_handler(bot.text_contains_filter(["/add"]))
 async def addanime(event: bot.SimpleBotEvent):
     try:
@@ -83,7 +82,7 @@ async def start_notifying(event: bot.SimpleBotEvent):
             anime_list = cur.fetchall()
             for anime in anime_list:
                 anime_id, url, title, last_episode = anime
-                page = requests.get('https://animego.org/anime/' + str(id) + '/player?_allow=true', headers=headers)
+                page = requests.get('https://animego.org/anime/' + str(anime_id) + '/player?_allow=true', headers=headers)
                 jsonData = json.loads(page.text)
                 a = jsonData["content"]
                 tree = html.fromstring(a)
